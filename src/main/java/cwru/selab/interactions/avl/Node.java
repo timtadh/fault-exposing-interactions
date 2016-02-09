@@ -125,17 +125,20 @@ public class Node<K extends Comparable, V> {
                 Node<K,V> newRoot;
                 if (LeftHeight() < RightHeight()) {
                     // promote the right side
+                    System.out.println("promote right");
                     newRoot = this.right.leftmostDescendent();
                     this.right = this.right.popNode(newRoot);
                     newRoot.left = this.left;
                     newRoot.right = this.right;
                 } else {
                     // promote the left side
-                    newRoot = this.left.rightmostDescendent();
+                    System.out.println("promote left");
+                    newRoot = this.left.leftmostDescendent();
                     this.left = this.left.popNode(newRoot);
                     newRoot.left = this.left;
                     newRoot.right = this.right;
                 }
+                System.out.println(String.format("newRoot %s", newRoot));
                 newRoot.height = Math.max(newRoot.LeftHeight(), newRoot.RightHeight()) + 1;
                 return newRoot.balance();
             }
@@ -243,9 +246,13 @@ public class Node<K extends Comparable, V> {
               "`node` %s had same key as `this` %s node but not the same object.",
                 node, this));
         } else if (cmp < 0) {
-            this.left = this.left.popNode(node);
+            if (this.left != null) {
+                this.left = this.left.popNode(node);
+            }
         } else {
-            this.right = this.right.popNode(node);
+            if (this.right != null) {
+                this.right = this.right.popNode(node);
+            }
         }
         this.height = Math.max(LeftHeight(), RightHeight()) + 1;
         return this;
