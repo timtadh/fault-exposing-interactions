@@ -76,7 +76,29 @@ public class test_Tree {
     }
 
     @Test
-    public void Bug1() throws Tree.Error {
+    public void Bug1PassingSequence() throws Tree.Error {
+        Tree<Integer, Integer> tree = new Tree<>();
+        tree.Put(4, 0);
+        tree.Put(5, 0);
+        tree.Put(3, 0);
+        tree.Put(7, 0);
+        tree.Put(9, 0);
+        assertThat(tree.Has(5), is(true));
+        assertThat(tree.Has(3), is(true));
+        assertThat(tree.Has(4), is(true));
+        assertThat(tree.Has(7), is(true));
+        assertThat(tree.Has(9), is(true));
+        System.out.println(tree.root);
+        tree.Remove(4);
+        System.out.println(String.format("removed %s %s", 4, tree.root));
+        assertThat(tree.Has(3), is(true));
+        assertThat(tree.Has(5), is(true));
+        assertThat(tree.Has(7), is(true));
+        assertThat(tree.Has(9), is(true));
+    }
+
+    @Test
+    public void Bug1ErrorSequence() throws Tree.Error {
         /* bug situation:
          * - create a tree such as: (5:0 (3:0 () 4:0) (7:0 () 9:0))
          * - remove the root 5
@@ -89,7 +111,7 @@ public class test_Tree {
          *      cause an incorrect AVL tree structure. However, it does not
          *      happen with every interaction between `Put` and `Remove`. Only
          *      ones that cause a "left side promotion" when that left side has
-         *      a right subtree.
+         *      a left or right subtree.
          */
         Tree<Integer, Integer> tree = new Tree<>();
         tree.Put(5, 0);
