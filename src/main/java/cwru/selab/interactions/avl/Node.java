@@ -4,7 +4,7 @@ import java.lang.Math;
 
 public class Node<K extends Comparable, V> {
 
-    public static class Error extends Exception {
+    public static class Error extends Tree.Error {
         public Error(String msg) {
             super(msg);
         }
@@ -158,9 +158,17 @@ public class Node<K extends Comparable, V> {
         if (cmp == 0) {
             throw new KeyExists(node.key);
         } else if (cmp < 0) {
-            this.left = this.left.pushNode(node);
+            if (this.left == null) {
+                this.left = node;
+            } else {
+                this.left = this.left.pushNode(node);
+            }
         } else {
-            this.right = this.right.pushNode(node);
+            if (this.right == null) {
+                this.right = node;
+            } else {
+                this.right = this.right.pushNode(node);
+            }
         }
         this.height = Math.max(LeftHeight(), RightHeight()) + 1;
         return this;
@@ -210,6 +218,27 @@ public class Node<K extends Comparable, V> {
             return this.left.leftmostDescendent();
         }
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return string(this);
+    }
+
+    static String string(Node node) {
+        if (node == null) {
+            return "";
+        }
+        String left = string(node.left);
+        String right = string(node.right);
+        if (left.equals("") && right.equals("")) {
+            return String.format("%s:%s", node.key, node.value);
+        } else if (left.equals("")) {
+            return String.format("(%s:%s () %s)", node.key, node.value, right);
+        } else if (right.equals("")) {
+            return String.format("(%s:%s %s)", node.key, node.value, left);
+        }
+        return String.format("(%s:%s %s %s)", node.key, node.value, left, right);
     }
 
 }
