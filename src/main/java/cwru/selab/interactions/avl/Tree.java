@@ -33,6 +33,12 @@ public class Tree<K extends Comparable,V> {
         }
         return this.root.Has(key);
     }
-}
 
+    public void Remove(K key) throws Tree.Error {
+        if (this.root == null) {
+            throw new Node.KeyNotFound(key);
+        }
+        this.root = this.root.Remove(key);
+    }
+}
 

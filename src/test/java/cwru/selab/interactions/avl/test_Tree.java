@@ -29,10 +29,10 @@ public class test_Tree {
     Random random = new SecureRandom();
 
     @Test
-    public void RandomInserts() throws Tree.Error {
+    public void RandomPuts() throws Tree.Error {
         Tree<Integer, Integer> tree = new Tree<>();
         List<KV<Integer,Integer>> kvs = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 100; i++) {
             KV<Integer, Integer> kv = new KV<>(random.nextInt(1000000), random.nextInt(1000000));
             kvs.add(kv);
             tree.Put(kv.key, kv.value);
@@ -46,6 +46,33 @@ public class test_Tree {
         System.out.println(tree.root);
     }
 
+    @Test
+    public void RandomPutsRemoves() throws Tree.Error {
+        Tree<Integer, Integer> tree = new Tree<>();
+        List<KV<Integer,Integer>> kvs = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            KV<Integer, Integer> kv = new KV<>(random.nextInt(1000000), random.nextInt(1000000));
+            kvs.add(kv);
+            tree.Put(kv.key, kv.value);
+            assertThat(tree.Has(kv.key), is(true));
+            assertThat(tree.Get(kv.key), is(kv.value));
+        }
+        for (KV<Integer,Integer> kv : kvs) {
+            assertThat(tree.Has(kv.key), is(true));
+            assertThat(tree.Get(kv.key), is(kv.value));
+        }
+        System.out.println(tree.root);
+        for (int i = 0; i < kvs.size(); i++) {
+            tree.Remove(kvs.get(i).key);
+            assertThat(tree.Has(kvs.get(i).key), is(false));
+            for (int j = i+1; j < kvs.size(); j++) {
+                KV<Integer, Integer> kv = kvs.get(j);
+                assertThat(tree.Has(kv.key), is(true));
+                assertThat(tree.Get(kv.key), is(kv.value));
+            }
+        }
+        System.out.println(tree.root);
+    }
 }
 
 

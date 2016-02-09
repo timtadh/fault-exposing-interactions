@@ -111,6 +111,51 @@ public class Node<K extends Comparable, V> {
         return this.balance();
     }
 
+    public Node<K,V> Remove(K key) throws Node.Error {
+        int cmp = key.compareTo(this.key);
+        if (cmp == 0) {
+            // we found the key
+            if (this.left == null && this.right == null) {
+                return null;
+            } else if (this.left == null) {
+                return this.right;
+            } else if (this.right == null) {
+                return this.left;
+            } else {
+                Node<K,V> newRoot;
+                if (LeftHeight() < RightHeight()) {
+                    // promote the right side
+                    newRoot = this.right.leftmostDescendent();
+                    this.right = this.right.popNode(newRoot);
+                    newRoot.left = this.left;
+                    newRoot.right = this.right;
+                } else {
+                    // promote the left side
+                    newRoot = this.left.rightmostDescendent();
+                    this.left = this.left.popNode(newRoot);
+                    newRoot.left = this.left;
+                    newRoot.right = this.right;
+                }
+                newRoot.height = Math.max(newRoot.LeftHeight(), newRoot.RightHeight()) + 1;
+                return newRoot.balance();
+            }
+        } else if (cmp < 0) {
+            if (this.left != null) {
+                this.left = this.left.Remove(key);
+            } else {
+                throw new Node.KeyNotFound(key);
+            }
+        } else {
+            if (this.right != null) {
+                this.right = this.right.Remove(key);
+            } else {
+                throw new Node.KeyNotFound(key);
+            }
+        }
+        this.height = Math.max(this.LeftHeight(), this.RightHeight()) + 1;
+        return this.balance();
+    }
+
     public Node<K,V> balance() throws Node.Error {
         if (Math.abs(LeftHeight() - RightHeight()) > 2) {
             if (LeftHeight() > RightHeight()) {
